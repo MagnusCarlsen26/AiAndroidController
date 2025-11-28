@@ -1,0 +1,4 @@
+google-generativeai
+pyautogui
+python-dotenv
+pynput
