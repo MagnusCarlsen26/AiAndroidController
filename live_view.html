@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Android Controller - Live View</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden; /* Prevent scrolling */
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #282c34;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+        }
+        h1 {
+            margin-top: 0;
+        }
+        .container {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            overflow: hidden;
+            align-items: stretch; /* Ensure children stretch to fill height */
+        }
+        .log-section, .image-section {
+            flex: 1;
+            padding: 25px;
+            border: 1px solid #3c4048;
+            border-radius: 8px;
+            background-color: #1c1c1c;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 0; /* Allow flex item to shrink below content size */
+        }
+        .log-section h2, .image-section h2 {
+            margin-top: 0;
+        }
+        #log-content {
+            flex: 1; /* Allow log content to take available space */
+            /* overflow-y: auto; /* Allow scrolling within log content only */ */
+            font-size: 0.8em; /* Smaller font to fit more content */
+            padding: 5px; /* Reduced padding */
+        }
+        .log-entry {
+            margin-bottom: 5px; /* Reduced margin */
+            padding-bottom: 5px; /* Reduced padding */
+            border-bottom: 1px solid #3c4048;
+        }
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        /* .expander-content - removed max-height and overflow previously */
+        img {
+            max-width: 100%;
+            max-height: 100%; /* Ensure image fits within its section */
+            height: auto;
+            object-fit: contain; /* Scale image to fit without cropping */
+            display: block;
+            margin: auto; /* Center image */
+        }
+        .image-section img {
+            flex: 1; /* Allow image to take available vertical space */
+            min-height: 0; /* Important for flex items containing images */
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+            margin: auto; /* Center image */
+        }
+        #image-status {
+            margin-top: 10px; /* Add some space above the status text */
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Android Controller - Live View</h1>
+    <div class="container">
+        <div class="log-section">
+            <h2>Agent Log</h2>
+            <div id="log-content">No log entries available.</div>
+        </div>
+        <div class="image-section">
+            <h2>Processed Image</h2>
+            <img id="processed-image" src="proccessedImg.png" alt="Processed Image">
+            <p id="image-status"></p>
+        </div>
+    </div>
+
+    <script>
+        function updateContent() {
+            // Update logs
+            fetch('agent_log.txt?' + new Date().getTime()) // Prevent caching
+                .then(response => {
+                    console.log('Fetch response:', response); // Added console log
+                    if (!response.ok) {
+                        throw new Error('agent_log.txt not found or inaccessible.');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    console.log('Fetched data:', data); // Added console log
+                    const logContentDiv = document.getElementById('log-content');
+                    logContentDiv.innerHTML = ''; // Clear previous logs
+
+                    if (data.trim() === '') {
+                        logContentDiv.innerHTML = 'No log entries available.';
+                        return;
+                    }
+
+                    const logEntries = [];
+                    let currentEntry = '';
+                    data.split(/\r?\n/).forEach(line => {
+                        currentEntry += line.trim(); // Trim each line to remove leading/trailing whitespace
+                        // Attempt to parse if the currentEntry forms a complete JSON object
+                        // A simple check is to see if it starts and ends with curly braces
+                        if (currentEntry.startsWith('{') && currentEntry.endsWith('}')) {
+                            let sanitizedEntry = currentEntry.replace(/\\'/g, "'").replace(/\\"/g, '"');
+                            try {
+                                const parsed = JSON.parse(sanitizedEntry);
+                                logEntries.push(parsed);
+                                currentEntry = ''; // Reset for the next entry
+                            } catch (e) {
+                                // If parsing fails, it might be a multi-line entry that's not yet complete
+                                // or a malformed JSON. Log the error for debugging.
+                                console.warn('Attempted parse failed, accumulating or malformed JSON:', currentEntry, e);
+                                // If it's a multi-line JSON, continue accumulating. If malformed, we will skip it.
+                            }
+                        }
+                    });
+                    
+                    // If there's any remaining content in currentEntry, try to parse it as a last resort
+                    if (currentEntry.trim() !== '') {
+                        let sanitizedEntry = currentEntry.replace(/\\'/g, "'").replace(/\\"/g, '"');
+                        try {
+                            const parsed = JSON.parse(sanitizedEntry);
+                            logEntries.push(parsed);
+                        } catch (e) {
+                            console.error('Final attempt JSON parse error:', currentEntry, e);
+                        }
+                    }
+
+                    logEntries.reverse().forEach(parsedEntry => { // Reverse to show latest first
+                        const logEntryDiv = document.createElement('div');
+                        logEntryDiv.className = 'log-entry';
+
+                        let summary = '';
+                        // Use parsedEntry directly as it's already a JSON object
+                        if (parsedEntry) {
+                            summary += `<p><strong>Tool:</strong> ${parsedEntry.toolName || 'N/A'}</p>`;
+                            if (parsedEntry.thoughts) {
+                                const thoughts = parsedEntry.thoughts;
+                                summary += `<p><strong>Thoughts:</strong> ${thoughts}</p>`;
+                            }
+                            // fullLogContent is not directly used for display in the summary
+                        } else {
+                            // This case should ideally not be hit with the new parsing logic, but keep as fallback
+                            summary += `<p>Error parsing log entry.</p>`;
+                        }
+
+                        logEntryDiv.innerHTML += summary;
+                        logContentDiv.appendChild(logEntryDiv);
+                    });
+
+                })
+                .catch(error => {
+                    const logContentDiv = document.getElementById('log-content');
+                    logContentDiv.innerHTML = `<p style="color: red;">Error loading logs: ${error.message}</p>`;
+                });
+
+            // Update image (simply refresh the src to force reload)
+            const imgElement = document.getElementById('processed-image');
+            const imageStatus = document.getElementById('image-status');
+            imgElement.src = 'proccessedImg.png?' + new Date().getTime();
+            imgElement.onload = () => {
+                imageStatus.textContent = ''; // Clear status on successful load
+            };
+            imgElement.onerror = () => {
+                imageStatus.textContent = 'proccessedImg.png not found or failed to load.';
+                imageStatus.style.color = 'red';
+            };
+        }
+
+        // Initial load
+        updateContent();
+
+        // Auto-refresh every 0.5 seconds
+        setInterval(updateContent, 500);
+    </script>
+</body>
+</html>
