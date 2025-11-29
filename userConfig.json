@@ -1,0 +1,44 @@
+{
+    "topLeftCorner": {
+        "coordinates": [
+            1460,
+            42
+        ]
+    },
+    "topRightCorner": {
+        "coordinates": [
+            1913,
+            63
+        ]
+    },
+    "bottomLeftCorner": {
+        "coordinates": [
+            1464,
+            1021
+        ]
+    },
+    "bottomRightCorner": {
+        "coordinates": [
+            1911,
+            1019
+        ]
+    },
+    "backButton": {
+        "coordinates": [
+            1483,
+            1053
+        ]
+    },
+    "homeButton": {
+        "coordinates": [
+            1540,
+            1051
+        ]
+    },
+    "recentAppsButton": {
+        "coordinates": [
+            1583,
+            1055
+        ]
+    }
+}
