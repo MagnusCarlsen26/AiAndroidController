@@ -1,13 +1,18 @@
 from dotenv import load_dotenv
-
 import os
+import pyautogui
 
+from utils.readConfig import readConfig
+from pygui.utils.focusAndroidPhoneWindow import focusAndroidPhoneWindow
 from service.geminiApi import sendToGemini
 from setupScripts.setup import setup
 from pygui.utils.visualizeCoordinates import visualize_coordinates
 
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+focusAndroidPhoneWindow()
+
 
 print("Press 1 for setup.")
 print("Press 2 for agentic control")
