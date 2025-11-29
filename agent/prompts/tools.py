@@ -53,13 +53,15 @@ TOOLS = """
       "text" : str // The text to be typed
     }
   },
-  {
-    "tool_name": "abort",
-    "tool_description": "something went wrong or task can't be done or you don't know how to do it or if the task is completed."
-  },
+
   {
     "tool_name": "unlockPhone",
     "tool_description": "if you think phone is locked, then use this tool to unlock."
   }
 ]
 """
+
+  # {
+  #   "tool_name": "abort",
+  #   "tool_description": "something went wrong or task can't be done or you don't know how to do it or if the task is completed. Try 10 times if you are not able to do it"
+  # },
