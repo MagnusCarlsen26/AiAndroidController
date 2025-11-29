@@ -1,9 +1,11 @@
 from pygui.utils.getScreenshot import getScreenshot
+from agent.utils.addCoordinateGrid import addCoordinateGrid
 from service.geminiApi import geminiApi
-from prompts.systemPrompt import SYSTEM_PROMPT
+from .prompts.systemPrompt import SYSTEM_PROMPT
 
 print(geminiApi(
-    "what do you see?",
+    "Tell me the coordiante i should click so that like button is triggered.",
     SYSTEM_PROMPT,
-    imageData=getScreenshot()
+    "gemini-2.0-flash",
+    imageData=addCoordinateGrid(getScreenshot())
 ))
