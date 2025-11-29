@@ -1,6 +1,15 @@
+from os import read
 import pyautogui
+from PIL import Image
+from pygui.utils.focusAndroidPhoneWindow import focusAndroidPhoneWindow
+from utils.readConfig import readConfig
 
-def getScreenshot(coordinates: dict):
+config = readConfig()
+
+def getScreenshot(coordinates: dict = config ) -> Image:
+
+    focusAndroidPhoneWindow()
+
     x1, y1 = coordinates["topLeftCorner"]["coordinates"]
     x2, y2 = coordinates["bottomRightCorner"]["coordinates"]
 
@@ -12,27 +21,8 @@ def getScreenshot(coordinates: dict):
 
 # Debug
 if __name__ == "__main__":
-    config_data = {
-        "topLeftCorner": {
-            "coordinates": [
-                1460,
-                42
-            ]
-        },
-        "bottomRightCorner": {
-            "coordinates": [
-                1911,
-                1019
-            ]
-        }
-    }
 
-    screenshot_coordinates = {
-        "topLeftCorner": config_data["topLeftCorner"],
-        "bottomRightCorner": config_data["bottomRightCorner"]
-    }
-
-    screenshot_image = getScreenshotOfBox(screenshot_coordinates)
+    screenshot_image = getScreenshot(config)
 
     screenshot_image.save("test_screenshot.png")
     print("Screenshot saved as test_screenshot.png")
