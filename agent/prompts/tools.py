@@ -47,6 +47,13 @@ TOOLS = """
     }
   },
   {
+    "tool_name": "types",
+    "tool_description": "Types the given text using the keyboard.",
+    "payload" : {
+      "text" : str // The text to be typed
+    }
+  },
+  {
     "tool_name": "abort",
     "tool_description": "something went wrong or task can't be done or you don't know how to do it or if the task is completed."
   },
