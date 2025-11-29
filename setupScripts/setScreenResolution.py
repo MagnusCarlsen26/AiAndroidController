@@ -19,7 +19,7 @@ def setScreenResolution():
     
     try:
         width, height = map(int, resolution.split('x'))
-        updateConfig({"resolution": {"width": width, "height": height}})
+        updateConfig({"screenResolution": {"width": width, "height": height}})
         print(f"Screen resolution set to: {width}x{height}")
     except ValueError:
         print("Invalid resolution format. Please use 'WIDTHxHEIGHT' (e.g., 1920x1080).")

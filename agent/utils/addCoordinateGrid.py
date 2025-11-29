@@ -2,9 +2,9 @@ from PIL import Image, ImageDraw, ImageFont
 
 def addCoordinateGrid(
     img,
-    grid_spacing=50,
     marks=None,
     save=False,
+    grid_spacing=25,
     output_path="proccessedImg.png"
 ):
     width, height = img.size
@@ -17,22 +17,27 @@ def addCoordinateGrid(
     grid_color = (255, 0, 0)
 
     # Draw vertical lines and X coordinates
+    last_x = 0
     for x in range(0, width, grid_spacing):
         # Draw vertical line
         draw.line([(x, 0), (x, height)], fill=grid_color, width=1)
         _draw_label(draw, font, x, str(x), True)
-    
+        last_x = x
+ 
     # Draw horizontal lines and Y coordinates
+    last_y = 0
     for y in range(0, height, grid_spacing):
         # Draw horizontal line
         draw.line([(0, y), (width, y)], fill=grid_color, width=1)
         _draw_label(draw, font, y, str(y), False)
-    
+        last_y = y
     _draw_marks(draw, marks)
 
     if save:
         img.save(output_path)
-    return img
+    
+    print(last_x, last_y)
+    return img, last_x, last_y
 
 def _draw_label(
     draw,

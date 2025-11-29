@@ -41,5 +41,9 @@
             1055
         ]
     },
-    "androidPhoneWindow": "motorola edge 60 pro"
+    "androidPhoneWindow": "motorola edge 60 pro",
+    "screenResolution": {
+        "width": 1920,
+        "height": 1080
+    }
 }
