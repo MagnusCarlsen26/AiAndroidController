@@ -78,6 +78,6 @@ def _draw_marks(draw, marks):
             draw.ellipse(
                 [(mark_x - mark_radius, mark_y - mark_radius),
                  (mark_x + mark_radius, mark_y + mark_radius)],
-                fill=(255, 0, 0, 128),  # Red, semi-transparent
-                outline=(255, 0, 0) # Red outline
+                fill=(0, 255, 0, 128),  # green, semi-transparent
+                outline=(0, 255, 0) # Green outline
             )
