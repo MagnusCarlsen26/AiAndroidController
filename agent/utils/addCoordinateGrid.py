@@ -36,8 +36,13 @@ def addCoordinateGrid(
     if save:
         img.save(output_path)
     
-    print(last_x, last_y)
-    return img, last_x, last_y
+    return {
+        "screenshot" : img,
+        "imageMeta" : {
+            "width" : last_x,
+            "height" : last_y
+        }
+    }
 
 def _draw_label(
     draw,

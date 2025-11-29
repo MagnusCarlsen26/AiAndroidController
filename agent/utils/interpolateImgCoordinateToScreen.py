@@ -30,7 +30,4 @@ def interpolateImgCoordinateToScreen(
     actual_x = top_left_x + interpolated_x
     actual_y = top_left_y + interpolated_y
 
-    return {
-        "x": int(actual_x),
-        "y": int(actual_y)
-    }
+    return actual_x, actual_y
