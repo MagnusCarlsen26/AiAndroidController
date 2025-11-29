@@ -10,16 +10,23 @@ TOOLS = """
   },
   {
     "tool_name": "scrollUp",
-    "tool_description": "scrolls in upward direction"
+    "tool_description": "scrolls in upward direction. Payload should be the coordinate where u want to keep your finger and scroll.",
+    "payload" : {
+      "horizantal" : int,
+      "vertical" : int,
+    }
   },
   {
     "tool_name": "scrollDown",
-    "tool_description": "scrolls in downards direction"
+    "tool_description": "scrolls in downards direction. Payload should be the coordinate where u want to keep your finger and scroll.",
+    "payload" : {
+      "horizantal" : int,
+      "vertical" : int,
+    }
   },
   {
     "tool_name": "pressBack",
     "tool_description": "Presses back button"
-  },
   {
     "tool_name": "pressHome",
     "tool_description": "Presses home button"
@@ -34,11 +41,18 @@ TOOLS = """
   },
   {
     "tool_name": "wait",
-    "tool_description": "waits for 1s. may be used when something is loading"
+    "tool_description": "waits for some secs. may be used when something is loading",
+    "payload" : {
+      "sleep" : int // in secs
+    }
   },
   {
     "tool_name": "abort",
     "tool_description": "something went wrong or task can't be done or you don't know how to do it or if the task is completed."
+  },
+  {
+    "tool_name": "unlockPhone",
+    "tool_description": "if you think phone is locked, then use this tool to unlock."
   }
 ]
 """

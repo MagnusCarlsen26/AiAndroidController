@@ -13,6 +13,7 @@ Here are the list of tools
 Your output should be a json with following format - 
 {{
     "toolName" : str,
+    "thoughts" : str, // give a brief description of what you are thinking
     "payload" : // As specified above. If no payload then dont include 'payload key'
 }}
 """

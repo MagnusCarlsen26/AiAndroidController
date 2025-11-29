@@ -15,14 +15,14 @@ while True:
     screenshot = addCoordinateGrid(getScreenshot(), save=True)
 
     chat = geminiApi(
-        "Like this video",
+        "Order mysore dosa for me from swiggy",
         SYSTEM_PROMPT,
         "gemini-2.0-flash",
         imageData=screenshot["screenshot"]
     )
 
     response = parseLLMResponse(chat[0])
-    print(response)
+    print(response.get("thoughts", "No thoughts provided."),"\n")
     for tool in TOOLS:
         if tool.__name__ == response["toolName"]:
             if 'payload' in response:
