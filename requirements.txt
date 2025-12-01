@@ -4,3 +4,4 @@ python-dotenv
 pynput
 Pillow
 matplotlib
+openai

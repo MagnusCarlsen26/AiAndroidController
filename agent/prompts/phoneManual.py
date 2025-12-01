@@ -4,7 +4,7 @@ Q. What if you are currently on a different app which you want to use?
 A. Press Home button and then find the app.
 
 Q. How to find apps?
-A. Scroll up/down in home screen. typically there are 5-6 screens. sometimes apps might be inside folders. 
+A. Apps are present in homescreen only. Human can swipe left or right. You can scroll up or down.
 
 Suggestions - 
 1. Keep track of what you are doing and what you have done so you don't get lost and don't repeat same things.

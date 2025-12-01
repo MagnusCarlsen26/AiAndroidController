@@ -19,7 +19,7 @@ def interpolateImgCoordinateToScreen(
     img_width = imgResolution["width"]
     img_height = imgResolution["height"]
 
-    target_horizontal = targetCoordinate["horizantal"]
+    target_horizontal = targetCoordinate["horizontal"]
     target_vertical = targetCoordinate["vertical"]
 
     # Perform linear interpolation using calculated screen dimensions

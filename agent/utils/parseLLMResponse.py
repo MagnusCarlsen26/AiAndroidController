@@ -1,5 +1,6 @@
 import json
 import re
+import ast
 
 def parseLLMResponse(response: str):
 
@@ -17,7 +18,23 @@ def parseLLMResponse(response: str):
 
     try:
         return json.loads(json_str)
+    except json.JSONDecodeError:
+        try:
+            # Clean up the string by removing extra quotes around keys
+            cleaned_json_str = re.sub(r"\'(\w+)\':", r"\"\\1\":", json_str) # Replace single quoted keys with double quoted keys for json.loads
+            return json.loads(cleaned_json_str)
+        except json.JSONDecodeError:
+            try:
+                # Attempt to parse as a Python literal (dictionary string representation)
+                parsed_dict = ast.literal_eval(json_str)
+                return parsed_dict
+            except (ValueError, SyntaxError) as e:
+                print(f"Error occured while parsing LLM response with ast.literal_eval. Error: {e}")
+                print("LLM response -")
+                print(response)
+                return None
     except Exception as e:
-        print("Error occured while parsing LLM response. LLM response -")
+        print(f"Error occured while parsing LLM response. Error: {e}")
+        print("LLM response -")
         print(response)
         return None

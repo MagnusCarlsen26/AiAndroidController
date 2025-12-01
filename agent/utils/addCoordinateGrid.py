@@ -36,6 +36,8 @@ def addCoordinateGrid(
     if save:
         img.save(output_path)
     
+    print("saved img to ", output_path)
+
     return {
         "screenshot" : img,
         "imageMeta" : {
@@ -74,7 +76,7 @@ def _draw_marks(draw, marks):
     if marks is not None:
         for mark_x, mark_y in marks:
             # Draw a red circle at the marked coordinate
-            mark_radius = 10
+            mark_radius = 5
             draw.ellipse(
                 [(mark_x - mark_radius, mark_y - mark_radius),
                  (mark_x + mark_radius, mark_y + mark_radius)],

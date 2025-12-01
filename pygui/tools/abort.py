@@ -1,4 +1,4 @@
 import sys
 
-def abort():
-    sys.exit("Task aborted by AI.")
+def abort(err: str):
+    sys.exit("Task Aborted: ", err)

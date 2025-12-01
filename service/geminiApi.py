@@ -13,23 +13,30 @@ def geminiApi(
     imageData: Image = None,
     chatHistory: list = []
 ):
-    google.generativeai.configure(
-        api_key=GEMINI_API_KEY,
-        transport="rest"
-    )
+    try:
 
-    model_instance = google.generativeai.GenerativeModel(
-        model, system_instruction=sys_prompt
-    )
+        print(message, "gmeiniAPI")
 
-    if chatHistory:
-        convo = model_instance.start_chat(history=chatHistory)
-    else:
-        convo = model_instance.start_chat()
-    
-    content = [message]
-    if imageData:
-        content.append(imageData)
+        google.generativeai.configure(
+            api_key=GEMINI_API_KEY,
+            transport="rest"
+        )
 
-    convo.send_message(content)
-    return convo.last.text, convo.history
+        model_instance = google.generativeai.GenerativeModel(
+            model, system_instruction=sys_prompt
+        )
+
+        if chatHistory:
+            convo = model_instance.start_chat(history=chatHistory)
+        else:
+            convo = model_instance.start_chat()
+        
+        content = [message]
+        if imageData:
+            content.append(imageData)
+
+        convo.send_message(content)
+        return convo.last.text, convo.history
+    except Exception as e:
+        print(f"Error in geminiApi: {e}")
+        return None, []
