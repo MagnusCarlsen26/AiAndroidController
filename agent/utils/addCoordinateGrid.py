@@ -5,7 +5,9 @@ def addCoordinateGrid(
     marks=None,
     save=False,
     grid_spacing=25,
-    output_path="proccessedImg.png"
+    output_path="proccessedImg.png",
+    x_offset=0,
+    y_offset=0
 ):
     width, height = img.size
 
@@ -21,7 +23,7 @@ def addCoordinateGrid(
     for x in range(0, width, grid_spacing):
         # Draw vertical line
         draw.line([(x, 0), (x, height)], fill=grid_color, width=1)
-        _draw_label(draw, font, x, str(x), True)
+        _draw_label(draw, font, x + x_offset, str(x + x_offset), True)
         last_x = x
  
     # Draw horizontal lines and Y coordinates
@@ -29,7 +31,7 @@ def addCoordinateGrid(
     for y in range(0, height, grid_spacing):
         # Draw horizontal line
         draw.line([(0, y), (width, y)], fill=grid_color, width=1)
-        _draw_label(draw, font, y, str(y), False)
+        _draw_label(draw, font, y + y_offset, str(y + y_offset), False)
         last_y = y
     _draw_marks(draw, marks)
 
