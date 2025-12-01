@@ -159,6 +159,31 @@
                                 const thoughts = parsedEntry.thoughts;
                                 summary += `<p><strong>Thoughts:</strong> ${thoughts}</p>`;
                             }
+                            if (parsedEntry.stage) {
+                                summary += `<p><strong>Stage:</strong> ${parsedEntry.stage}</p>`;
+                            }
+                            if (parsedEntry.depth !== undefined) {
+                                summary += `<p><strong>Depth:</strong> ${parsedEntry.depth}</p>`;
+                            }
+                            if (parsedEntry.quadrant) {
+                                summary += `<p><strong>Quadrant:</strong> ${parsedEntry.quadrant}</p>`;
+                            }
+                            if (parsedEntry.message) {
+                                summary += `<p><strong>Message:</strong> ${parsedEntry.message}</p>`;
+                            }
+                            // Update image status with the latest relevant message
+                            if (parsedEntry.stage === "quadrant_search" || parsedEntry.stage === "target_present_response" || parsedEntry.stage === "find_coordinates_start") {
+                                let imageStatusText = `Depth: ${parsedEntry.depth}`; 
+                                if (parsedEntry.quadrant) {
+                                    imageStatusText += `, Quadrant: ${parsedEntry.quadrant}`;
+                                }
+                                imageStatusText += `: ${parsedEntry.message}`;
+                                document.getElementById('image-status').textContent = imageStatusText;
+                            } else if (parsedEntry.stage === "final_result") {
+                                document.getElementById('image-status').textContent = `Final Result: ${parsedEntry.message} - Coordinates: (${parsedEntry.coordinates[0]}, ${parsedEntry.coordinates[1]})`;
+                            } else if (parsedEntry.stage === "final_abort") {
+                                document.getElementById('image-status').textContent = `Aborted: ${parsedEntry.message}`;
+                            }
                             // fullLogContent is not directly used for display in the summary
                         } else {
                             // This case should ideally not be hit with the new parsing logic, but keep as fallback

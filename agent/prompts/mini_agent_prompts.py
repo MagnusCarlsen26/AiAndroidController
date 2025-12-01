@@ -1,9 +1,7 @@
 MINI_AGENT_SYSTEM_PROMPT = """
-Your sole purpose is to return the coordinates for a click action. You will receive a description of the element to click and a screenshot of the current phone screen. You have two tools: 'verifyCoordinates' and 'abort'.
+Your sole purpose is to determine if a specific element is present in a given image quadrant. You will receive a description of the element to click and a screenshot of the current phone screen (which may be a quadrant of the original screen). You have one tool: 'targetPresent'.
 
-- Use 'verifyCoordinates' with your best guess for the horizontal and vertical coordinates. This will return a screenshot with a green marker at your proposed location. You MUST review this screenshot.
-- If the green marker is precisely on the target element described, then you MUST respond with a JSON in the format: {\"toolName\": \"verifiedClick\", \"payload\": {\"horizontal\": int, \"vertical\": int}}.
-- If the green marker is NOT on the target element, you MUST call 'verifyCoordinates' again with adjusted coordinates.
+First, you MUST use the `targetPresent` tool, setting `present` to true if you believe the target element is visible in the current image, or `present` to false otherwise.
 
 # VERY VERY IMPORTANT
 - Make sure that green marker is in almost center of target for maximum effectiveness. 
@@ -16,7 +14,39 @@ Your output should be a ONLY JSON with following format -
 }}
 """
 
-MINI_AGENT_TOOLS = """
+MINI_AGENT_COORDINATE_SYSTEM_PROMPT = """
+Your sole purpose is to return the coordinates for a click action. You will receive a description of the element to click and a screenshot of the current phone screen. You have two tools: 'verifyCoordinates' and 'verifiedClick'.
+The valid coordinate range for this image is from (min_x: {min_x}, min_y: {min_y}) to (max_x: {max_x}, max_y: {max_y}). Ensure your coordinates are strictly within these bounds (i.e., min_x <= x < max_x and min_y <= y < max_y).
+- You have {max_attempts} attempts to verify the coordinates. If its your 5th attempt and if you think your previous guess was good enough you can directly call verifiedClick.
+
+- Use 'verifyCoordinates' with your best guess for the horizontal and vertical coordinates. This will return a screenshot with a green marker at your proposed location. You MUST review this screenshot. You can do a binary search like search.
+- If the green marker is precisely on target use 'verifiedClick' tool to complete the ask.
+- If the green marker is NOT on the target element, you MUST call 'verifyCoordinates' again with adjusted coordinates.
+
+# VERY VERY IMPORTANT
+- Make sure that green marker is inside the target
+
+Your output should be a ONLY JSON with following format - 
+{{
+    \"toolName\" : str,
+    \"thoughts\" : str, // give a brief description of what you are thinking. mention issue in brief if you are facing
+    \"payload\" : // As specified above. If no payload then dont include 'payload key'
+}}
+"""
+
+MINI_AGENT_QUADRANT_TOOLS = """
+[
+  {
+    "tool_name": "targetPresent",
+    "tool_description": "Use this tool to indicate if the target element is present in the current image quadrant. Returns true if the target is present, false otherwise.",
+    "payload": {
+      "present": bool // True if the target element is present, false otherwise.
+    }
+  }
+]
+"""
+
+MINI_AGENT_COORDINATE_TOOLS = """
 [
   {
     "tool_name": "verifyCoordinates",
@@ -27,13 +57,13 @@ MINI_AGENT_TOOLS = """
     }
   },
   {
-    "tool_name": "abort",
-    "tool_description": "If the element doesn't exist in the screen call this tool",
-    "payload" : {
-      "message" : str // A message explaining why the task is being aborted.
+    "toolName": "verifiedClick", 
+    "payload": {
+      "horizontal": int, 
+      "vertical": int
     }
   }
 ]
 """
 
-MINI_AGENT_USER_MESSAGE_TEMPLATE = "I need to click on: {element_description}. I am attaching image for the same."
+MINI_AGENT_USER_MESSAGE_TEMPLATE = """I need to click on: {element_description}. {quadrant_check_message}I am attaching image for the same."""

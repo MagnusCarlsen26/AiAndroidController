@@ -1,6 +1,8 @@
 import os
 from dotenv import load_dotenv
 import openai
+import base64
+from io import BytesIO
 
 load_dotenv()
 CHATGPT_API_KEY = os.getenv("CHATGPT_API_KEY")
@@ -8,13 +10,11 @@ CHATGPT_API_KEY = os.getenv("CHATGPT_API_KEY")
 def chatgptApi(
     message: str,
     sys_prompt: str = "",
-    model: str = "gpt-5-nano", 
+    model: str = "gpt-4o", 
     imageData: None = None, 
     chatHistory: list = []
 ):
     try:
-
-        print(message, "chatgptAPI")
 
         openai.api_key = CHATGPT_API_KEY
 
@@ -28,11 +28,10 @@ def chatgptApi(
             elif hasattr(item, 'role') and item.role == 'model':
                 messages.append({"role": "assistant", "content": item.parts[0].text})
 
-        messages.append({"role": "user", "content": message})
-
         if imageData:
-            print("Warning: imageData is not supported by OpenAI's ChatCompletion API in this implementation and will be ignored.")
-
+            messages.append({"role": "user", "content": _prepare_image_message(message, imageData)})
+        else:
+            messages.append({"role": "user", "content": message})
 
         response = openai.ChatCompletion.create(
             model=model,
@@ -49,3 +48,19 @@ def chatgptApi(
     except Exception as e:
         print(f"Error in chatgptApi: {e}")
         return None, []
+
+def _prepare_image_message(message: str, imageData):
+    buffered = BytesIO()
+    imageData.save(buffered, format="PNG")
+    base64_image = base64.b64encode(buffered.getvalue()).decode('utf-8')
+
+    return [
+        {"type": "text", "text": message},
+        {
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:image/png;base64,{base64_image}",
+                "detail": "high"
+            },
+        },
+    ]
